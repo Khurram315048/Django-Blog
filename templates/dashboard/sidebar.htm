@@ -3,7 +3,7 @@
         <a href="{% url 'dashboard' %}" 
         class="nav-link text-dark {% if '/dashboard/' == request.path %}bg-warning{% endif %}">Dashboard</a>
        
-        <a href="#" class="nav-link text-dark ">Users</a>
+        <a href="{% url 'users' %}" class="nav-link text-dark {% if '/users/' in request.path %}bg-warning{% endif %}">Users</a>
 
         <a href="{% url 'categories' %}"
         class="nav-link text-dark {% if '/categories/' in request.path %}bg-warning{% endif %}">Categories</a>
