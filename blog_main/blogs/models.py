@@ -1,5 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.text import slugify
+
+
+
 
 class Category(models.Model):
     category_name=models.CharField(max_length=50,unique=True)
@@ -32,6 +36,30 @@ class Blog(models.Model):
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
 
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.title)
+            slug = base_slug
+            n = 1
+            while Blog.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f"{base_slug}-{n}"
+                n += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.title
     
+
+
+
+class Comment(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    blog=models.ForeignKey(Blog,on_delete=models.CASCADE)
+    comment=models.TextField(max_length=50)
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.comment
