@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import  BlogPostForm,CategoryForm,AddUserForm,EditUserForm
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
+import uuid
 
 @login_required(login_url='login')
 def dashboard(request):
