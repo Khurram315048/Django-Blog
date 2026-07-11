@@ -23,7 +23,7 @@
               </tr>
             </thead>
             <tbody>
-            {% for post in posts %}
+            {% for post in page_obj %}
               <tr>
                 <td>{{ forloop.counter }}</td>
                 <td>{{ post.title }}</td>

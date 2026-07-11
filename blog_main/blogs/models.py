@@ -42,9 +42,9 @@ class Tag(models.Model):
 class Blog(models.Model):
     title=models.CharField(max_length=500)
     slug=models.SlugField(max_length=150,unique=True,blank=True)
-    category=models.ForeignKey(Category,on_delete=models.PROTECT)
+    category=models.ForeignKey(Category,on_delete=models.CASCADE)
     tags=models.ManyToManyField(Tag, blank=True, related_name='blogs')
-    author=models.ForeignKey(User,on_delete=models.PROTECT)
+    author=models.ForeignKey(User,on_delete=models.CASCADE)
     featured_image=models.ImageField(upload_to='uploads/%Y/%m/%d')
     short_description=models.TextField(max_length=500)
     blog_body=models.TextField(max_length=2000)

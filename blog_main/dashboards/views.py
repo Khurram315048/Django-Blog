@@ -159,9 +159,9 @@ def delete_post(request,pk):
 
 @staff_required
 def users(request):
-    all_users=User.objects.all().order_by('-date_joined')
+    all_users=User.objects.all().order_by('date_joined')
     paginator=Paginator(all_users, 20)
-    page=request.GET.get('page', 1)
+    page=request.GET.get('page',1)
     page_obj=paginator.get_page(page)
     
     context={
