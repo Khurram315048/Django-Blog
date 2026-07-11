@@ -1,9 +1,12 @@
+from django.core.checks import messages
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from .models import Blog,Category,Comment,Like
 from django.db.models import Q
 from django.http import JsonResponse
+from django.core.paginator import Paginator
+
 
 
 def posts_by_category(request,category_id):
@@ -11,7 +14,7 @@ def posts_by_category(request,category_id):
     try:
 
         category=Category.objects.get(pk=category_id)
-    except:
+    except Category.DoesNotExist:
         return redirect('home')
     
     context={
@@ -23,14 +26,32 @@ def posts_by_category(request,category_id):
 
 def blogs(request,slug):
     single_blog=get_object_or_404(Blog,slug=slug,status='Published')
-    
     if request.method=='POST':
-        comment=Comment()
-        comment.user=request.user
-        comment.blog=single_blog
-        comment.comment=request.POST['comment']
-        comment.save()
+        if not request.user.is_authenticated:
+            return redirect('login')
+        
+    comment_text=request.POST.get('comment', '').strip()
+
+    if not comment_text:
+        messages.error(request,'Comment cannot be empty')
         return HttpResponseRedirect(request.path_info)
+    
+    comments=Comment.objects.create(
+        user=request.user,
+        blog=single_blog,
+        comment=comment_text
+    )
+    
+    # if request.method=='POST':
+    #     comment=Comment()
+
+    #     if not request.user.is_authenticated:
+    #         return redirect('login')
+    #     comment.user=request.user
+    #     comment.blog=single_blog
+    #     comment.comment=request.POST['comment']
+    #     comment.save()
+    #     return HttpResponseRedirect(request.path_info)
     
     comments=Comment.objects.filter(blog=single_blog)
     comment_count=comments.count()
@@ -43,15 +64,42 @@ def blogs(request,slug):
     return render(request,'blogs.htm',context)
 
 
+# def search(request):
+#     keyword=request.GET.get('keyword')
+#     blogs=Blog.objects.filter(Q(title__icontains=keyword) | Q(short_description__icontains=keyword) | Q(blog_body__icontains=keyword)
+#                               ,status='Published')
+#     context={
+#         'blogs':blogs,
+#         'keyword':keyword,
+#     }
+#     return render(request,'search.htm',context)
+
+
 def search(request):
-    keyword=request.GET.get('keyword')
-    blogs=Blog.objects.filter(Q(title__icontains=keyword) | Q(short_description__icontains=keyword) | Q(blog_body__icontains=keyword)
-                              ,status='Published')
+    keyword=request.GET.get('keyword', '').strip()
+    if not keyword or len(keyword) < 2:
+        messages.warning(request,'Please enter at least 2 characters')
+        return redirect('home')
+    
+    blogs=Blog.objects.filter(
+        Q(title__icontains=keyword) | 
+        Q(short_description__icontains=keyword) |
+        Q(blog_body__icontains=keyword),
+        status='Published'
+    ).select_related('author', 'category')
+    
+    paginator=Paginator(blogs,10)
+    page=request.GET.get('page',1)
+    page_obj=paginator.get_page(page)
     context={
-        'blogs':blogs,
+        'page_obj':page_obj,
         'keyword':keyword,
     }
+    
     return render(request,'search.htm',context)
+
+
+
 
 
 
