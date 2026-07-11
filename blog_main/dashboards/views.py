@@ -7,7 +7,8 @@ from django.contrib.auth.models import User
 import uuid
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
-
+import logging
+from django.contrib import messages
 
 def staff_required(view_func):
     return user_passes_test(lambda u: u.is_staff, login_url='login')(login_required(login_url='login')(view_func))
@@ -41,6 +42,7 @@ def add_category(request):
         form=CategoryForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request,'Category added successfully!')
             return redirect('categories')
 
     context={
@@ -55,6 +57,7 @@ def edit_category(request,pk):
         form=CategoryForm(request.POST,instance=category)
         if form.is_valid():
             form.save()
+            messages.success(request,'Category updated successfully!')
             return redirect('categories')
 
     form=CategoryForm(instance=category)
@@ -70,24 +73,17 @@ def edit_category(request,pk):
 def delete_category(request,pk):
     category=get_object_or_404(Category,pk=pk)
     category.delete()
+    messages.success(request,'Category deleted successfully!')
     return redirect('categories')
 
-
-
-# @staff_required
-# def posts(request):
-#     posts=Blog.objects.all()
-#     context={
-#         'posts':posts,
-#     }
-#     return render(request,'dashboard/posts.htm',context)    
+  
 
 
 @staff_required
 def posts(request):
     posts=Blog.objects.all().select_related('author','category')
     paginator=Paginator(posts,10)  
-    page=request.GET.get('page', 71)
+    page=request.GET.get('page',10)
     page_obj=paginator.get_page(page)
     
     context={
@@ -106,10 +102,11 @@ def add_post(request):
             base_slug=slugify(form.cleaned_data['title'])
             post.slug=f"{base_slug}-{uuid.uuid4().hex[:8]}"
             post.save()
+            messages.success(request,'Post added successfully!')
             return redirect('posts')
         else:
-            print('form is invalid')
-            print(form.errors)
+            logger=logging.getLogger(__name__)
+            logger.error(f'Form validation failed:{form.errors}')
 
     form=BlogPostForm()
     context={
@@ -120,23 +117,27 @@ def add_post(request):
 
 
 
+
+
 @staff_required
-def edit_post(request,pk):
-    post=get_object_or_404(Blog,pk=pk)
+def edit_post(request, pk):
+    post=get_object_or_404(Blog, pk=pk)
     if request.method == 'POST':
         form=BlogPostForm(request.POST,request.FILES,instance=post)
         if form.is_valid():
-            post=form.save()
-            title=form.cleaned_data['title']
-            post.slug=slugify(title) + '-'+str(post.id)
-            post.save()
+            post=form.save() 
+            messages.success(request,'Post Updated successfully!') 
             return redirect('posts')
+    
     form=BlogPostForm(instance=post)
     context={
         'form':form,
         'post':post
     }
     return render(request,'dashboard/edit_post.htm',context)
+
+
+
 
 
 
@@ -150,10 +151,14 @@ def delete_post(request,pk):
 
 @staff_required
 def users(request):
-    users=User.objects.all()
+    all_users=User.objects.all().order_by('-date_joined')
+    paginator=Paginator(all_users, 20)
+    page=request.GET.get('page', 1)
+    page_obj=paginator.get_page(page)
+    
     context={
-        'users':users,
-    }
+        'page_obj':page_obj,
+        }
     return render(request,'dashboard/users.htm',context)
 
 
@@ -163,6 +168,7 @@ def add_user(request):
         form=AddUserForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request,'User added successfully!')
             return redirect('users')
         else:
             print(form.errors)
@@ -181,6 +187,7 @@ def edit_user(request, pk):
         form=EditUserForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
+            messages.success(request,'User updated successfully!')
             return redirect('users')
 
     form=EditUserForm(instance=user)
@@ -194,4 +201,5 @@ def edit_user(request, pk):
 def delete_user(request,pk):
     user=get_object_or_404(User,pk=pk)
     user.delete()
+    messages.success(request,'User deleted successfully!')
     return redirect('users')    

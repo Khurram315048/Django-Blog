@@ -68,16 +68,6 @@ class Blog(models.Model):
             counter += 1
         return slug
 
-    # def save(self, *args, **kwargs):
-    #     if not self.slug:
-    #         base_slug=slugify(self.title)
-    #         slug=base_slug
-    #         n = 1
-    #         while Blog.objects.filter(slug=slug).exclude(pk=self.pk).exists():
-    #             slug=f"{base_slug}-{n}"
-    #             n += 1
-    #         self.slug=slug
-    #     super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title

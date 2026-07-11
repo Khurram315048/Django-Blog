@@ -1,4 +1,3 @@
-from django.core.checks import messages
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
@@ -7,7 +6,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django import forms
-from django.contrib import messages
+from django.contrib import messages 
 
 class CommentForm(forms.ModelForm):
     class Meta:
@@ -34,55 +33,37 @@ def posts_by_category(request,category_id):
     return render(request,'posts_by_category.htm',context)
 
 
+
 def blogs(request,slug):
     single_blog=get_object_or_404(Blog,slug=slug,status='Published')
-    if request.method=='POST':
+    
+    if request.method == 'POST':
         if not request.user.is_authenticated:
             return redirect('login')
         
-    comment_text=request.POST.get('comment', '').strip()
-
-    if not comment_text:
-        messages.error(request,'Comment cannot be empty')
+        comment_text=request.POST.get('comment', '').strip()
+        
+        if not comment_text:
+            messages.error(request,'Comment cannot be empty')
+            return HttpResponseRedirect(request.path_info)
+        
+        Comment.objects.create(
+            user=request.user,
+            blog=single_blog,
+            comment=comment_text
+        )
         return HttpResponseRedirect(request.path_info)
     
-    comments=Comment.objects.create(
-        user=request.user,
-        blog=single_blog,
-        comment=comment_text
-    )
-    
-    # if request.method=='POST':
-    #     comment=Comment()
-
-    #     if not request.user.is_authenticated:
-    #         return redirect('login')
-    #     comment.user=request.user
-    #     comment.blog=single_blog
-    #     comment.comment=request.POST['comment']
-    #     comment.save()
-    #     return HttpResponseRedirect(request.path_info)
-    
     comments=Comment.objects.filter(blog=single_blog)
-    comment_count=comments.count()
-
+    
     context={
         'single_blog':single_blog,
         'comments':comments,
-        'comment_count':comment_count,
+        'comment_count':comments.count(),
     }
     return render(request,'blogs.htm',context)
 
 
-# def search(request):
-#     keyword=request.GET.get('keyword')
-#     blogs=Blog.objects.filter(Q(title__icontains=keyword) | Q(short_description__icontains=keyword) | Q(blog_body__icontains=keyword)
-#                               ,status='Published')
-#     context={
-#         'blogs':blogs,
-#         'keyword':keyword,
-#     }
-#     return render(request,'search.htm',context)
 
 
 def search(request):
@@ -124,6 +105,6 @@ def toggle_like(request,slug):
         liked=True
     return JsonResponse(
         {
-            'liked': liked,
-            'count': blog.likes.count()
+            'liked':liked,
+            'count':blog.likes.count()
          })

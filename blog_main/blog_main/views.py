@@ -21,18 +21,6 @@ class ProfileSettingsForm(forms.ModelForm):
         fields=('username','first_name','last_name','email')
 
 
-# @login_required(login_url='login')
-# def profile(request):
-#     my_blogs=Blog.objects.filter(author=request.user)
-#     my_comments=Comment.objects.filter(user=request.user)
-#     total_likes_received=Like.objects.filter(blog__author=request.user).count()
-#     context={
-#         'my_blogs_count':my_blogs.count(),
-#         'my_comments_count':my_comments.count(),
-#         'total_likes_received':total_likes_received,
-#     }
-#     return render(request,'profile/overview.htm',context)
-
 
 
 @login_required(login_url='login')
@@ -139,12 +127,9 @@ def profile_settings(request):
 
 
 def home(request):
-    
-    featured_posts=Blog.objects.filter(is_featured=True,status='Published').order_by('updated_at')
+    featured_posts=Blog.objects.filter(is_featured=True,status='Published').order_by('-updated_at')
     posts=Blog.objects.filter(is_featured=False,status='Published')
-    logger=logging.getLogger(__name__)
-    logger.info(f"Retrieved {len(posts)} posts")
-    logger.error(f'Form is invalid: {forms.errors}')
+    
     context={
         'featured_posts':featured_posts,
         'posts':posts,
