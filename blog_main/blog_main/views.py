@@ -1,4 +1,4 @@
-from django.core.checks import messages
+from django.contrib import messages 
 from django.http import HttpResponse
 from django.shortcuts import render,redirect,get_object_or_404
 from blogs.models import Category,Blog
@@ -14,7 +14,7 @@ import uuid
 import logging
 from django.core.paginator import Paginator
 
-
+logger=logging.getLogger(__name__)
 
 class ProfileSettingsForm(forms.ModelForm):
     class Meta:
@@ -43,9 +43,9 @@ def profile(request):
 
 @login_required(login_url='login')
 def profile_blogs(request):
-    my_blogs=Blog.objects.filter(author=request.user).order_by('-created_at')
+    my_blogs=Blog.objects.filter(author=request.user).order_by('created_at')
     paginator=Paginator(my_blogs,10)
-    page=request.GET.get('page', 1)
+    page=request.GET.get('page',1)
     page_obj=paginator.get_page(page)
     context={
         'page_obj':page_obj,
@@ -95,7 +95,15 @@ def profile_edit_blog(request,pk):
 @login_required(login_url='login')
 def profile_delete_blog(request,pk):
     post=get_object_or_404(Blog,pk=pk,author=request.user)   
-    post.delete()
+    if request.method == 'POST':
+        post_title=post.title  
+        post.delete()
+        messages.success(request,f'Your blog "{post_title}" has been deleted!')
+        logger.info(f'User {request.user} deleted their blog: {post_title}')
+        return redirect('profile_blogs')
+    
+   
+    messages.warning(request,'Invalid request method.')
     return redirect('profile_blogs')
 
 

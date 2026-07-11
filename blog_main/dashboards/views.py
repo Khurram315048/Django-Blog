@@ -10,6 +10,10 @@ from django.core.paginator import Paginator
 import logging
 from django.contrib import messages
 
+
+
+logger=logging.getLogger(__name__)
+
 def staff_required(view_func):
     return user_passes_test(lambda u: u.is_staff, login_url='login')(login_required(login_url='login')(view_func))
 
@@ -141,9 +145,15 @@ def edit_post(request, pk):
 @staff_required
 def delete_post(request,pk):
     post=get_object_or_404(Blog,pk=pk)
-    post.delete()
-    messages.success(request,'Post deleted successfully!')
-    return redirect('posts')    
+    if request.method=='POST':
+        post_title=post.title  
+        post.delete()
+        messages.success(request,f'Post "{post_title}" deleted successfully!')
+        logger.info(f'Post deleted: {post_title} by user {request.user}')
+        return redirect('posts')
+    
+    messages.warning(request,'Invalid request method. Please use the delete button in the table.')
+    return redirect('posts')   
 
 
 
@@ -199,6 +209,12 @@ def edit_user(request, pk):
 @staff_required
 def delete_user(request,pk):
     user=get_object_or_404(User,pk=pk)
-    user.delete()
-    messages.success(request,'User deleted successfully!')
-    return redirect('users')    
+    if request.method == 'POST':
+        username=user.username  
+        user.delete()
+        messages.success(request,f'User "{username}" deleted successfully!')
+        logger.info(f'User deleted: {username} by admin {request.user}')
+        return redirect('users')
+    
+    messages.warning(request,'Invalid request method. Please use the delete button in the table.')
+    return redirect('users')  
