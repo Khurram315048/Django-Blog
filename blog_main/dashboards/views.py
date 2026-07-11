@@ -6,8 +6,7 @@ from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 import uuid
 from django.contrib.auth.decorators import login_required, user_passes_test
-
-
+from django.core.paginator import Paginator
 
 
 def staff_required(view_func):
@@ -27,7 +26,11 @@ def dashboard(request):
 
 @staff_required
 def categories(request):
-    return render(request,'dashboard/categories.htm')
+    categories=Category.objects.all().order_by('created_at')
+    context={
+        'categories':categories
+        }
+    return render(request,'dashboard/categories.htm',context)
 
 
 
@@ -71,14 +74,26 @@ def delete_category(request,pk):
 
 
 
+# @staff_required
+# def posts(request):
+#     posts=Blog.objects.all()
+#     context={
+#         'posts':posts,
+#     }
+#     return render(request,'dashboard/posts.htm',context)    
+
+
 @staff_required
 def posts(request):
-    posts=Blog.objects.all()
+    posts=Blog.objects.all().select_related('author','category')
+    paginator=Paginator(posts,10)  
+    page=request.GET.get('page', 71)
+    page_obj=paginator.get_page(page)
+    
     context={
-        'posts':posts,
-    }
-    return render(request,'dashboard/posts.htm',context)    
-
+        'page_obj':page_obj
+        }
+    return render(request,'dashboard/posts.htm',context)
 
 
 @staff_required

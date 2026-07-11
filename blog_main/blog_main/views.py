@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 import uuid
 import logging
-
+from django.db.models import Count, Prefetch
 
 
 
@@ -21,17 +21,35 @@ class ProfileSettingsForm(forms.ModelForm):
         fields=('username','first_name','last_name','email')
 
 
+# @login_required(login_url='login')
+# def profile(request):
+#     my_blogs=Blog.objects.filter(author=request.user)
+#     my_comments=Comment.objects.filter(user=request.user)
+#     total_likes_received=Like.objects.filter(blog__author=request.user).count()
+#     context={
+#         'my_blogs_count':my_blogs.count(),
+#         'my_comments_count':my_comments.count(),
+#         'total_likes_received':total_likes_received,
+#     }
+#     return render(request,'profile/overview.htm',context)
+
+
+
 @login_required(login_url='login')
 def profile(request):
-    my_blogs=Blog.objects.filter(author=request.user)
-    my_comments=Comment.objects.filter(user=request.user)
-    total_likes_received=Like.objects.filter(blog__author=request.user).count()
+    my_blogs=Blog.objects.filter(author=request.user).select_related('category', 'author')
+    
+    my_comments=Comment.objects.filter(user=request.user).select_related('blog', 'user')
+    
+    likes_count=Like.objects.filter(blog__author=request.user).count()
+    
     context={
         'my_blogs_count':my_blogs.count(),
         'my_comments_count':my_comments.count(),
-        'total_likes_received':total_likes_received,
+        'total_likes_received':likes_count,
     }
-    return render(request,'profile/overview.htm',context)
+    return render(request,'profile/overview.htm', context)
+
 
 
 @login_required(login_url='login')

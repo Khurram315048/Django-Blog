@@ -72,9 +72,12 @@ class Blog(models.Model):
 
 
 class Comment(models.Model):
+    class Meta:
+        ordering=['-created_at']
+
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     blog=models.ForeignKey(Blog,on_delete=models.CASCADE)
-    comment=models.TextField(max_length=50)
+    comment=models.TextField(max_length=500)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
 

@@ -6,6 +6,16 @@ from .models import Blog,Category,Comment,Like
 from django.db.models import Q
 from django.http import JsonResponse
 from django.core.paginator import Paginator
+from django import forms
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model=Comment
+        fields=['comment']
+        widgets={
+            'comment':forms.Textarea(attrs={'max_length':500})
+        }
 
 
 
