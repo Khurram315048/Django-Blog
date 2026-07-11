@@ -42,9 +42,9 @@ class Tag(models.Model):
 class Blog(models.Model):
     title=models.CharField(max_length=500)
     slug=models.SlugField(max_length=150,unique=True,blank=True)
-    category=models.ForeignKey(Category,on_delete=models.CASCADE)
+    category=models.ForeignKey(Category,on_delete=models.PROTECT)
     tags=models.ManyToManyField(Tag, blank=True, related_name='blogs')
-    author=models.ForeignKey(User,on_delete=models.CASCADE)
+    author=models.ForeignKey(User,on_delete=models.PROTECT)
     featured_image=models.ImageField(upload_to='uploads/%Y/%m/%d')
     short_description=models.TextField(max_length=500)
     blog_body=models.TextField(max_length=2000)
@@ -54,16 +54,30 @@ class Blog(models.Model):
     updated_at=models.DateTimeField(auto_now=True)
 
 
+
     def save(self, *args, **kwargs):
         if not self.slug:
-            base_slug=slugify(self.title)
-            slug=base_slug
-            n=1
-            while Blog.objects.filter(slug=slug).exclude(pk=self.pk).exists():
-                slug=f"{base_slug}-{n}"
-                n += 1
-            self.slug=slug
+            self.slug = self._generate_unique_slug(slugify(self.title))
         super().save(*args, **kwargs)
+
+    def _generate_unique_slug(self, base_slug):
+        slug = base_slug
+        counter = 1
+        while Blog.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+            slug = f"{base_slug}-{counter}"
+            counter += 1
+        return slug
+
+    # def save(self, *args, **kwargs):
+    #     if not self.slug:
+    #         base_slug=slugify(self.title)
+    #         slug=base_slug
+    #         n = 1
+    #         while Blog.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+    #             slug=f"{base_slug}-{n}"
+    #             n += 1
+    #         self.slug=slug
+    #     super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
