@@ -24,6 +24,13 @@ from blogs import views as BlogsView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path('profile/',views.profile,name='profile'),
+    path('profile/blogs/', views.profile_blogs, name='profile_blogs'),
+    path('profile/blogs/add/', views.profile_add_blog, name='profile_add_blog'),
+    path('profile/blogs/edit/<int:pk>/', views.profile_edit_blog, name='profile_edit_blog'),
+    path('profile/blogs/delete/<int:pk>/', views.profile_delete_blog, name='profile_delete_blog'),
+    path('profile/comments/', views.profile_comments, name='profile_comments'),
+    path('profile/settings/', views.profile_settings, name='profile_settings'),
     path('',views.home,name='home'),
     path('category/', include('blogs.urls')),
     path('blogs/<slug:slug>/',BlogsView.blogs,name='blogs'),

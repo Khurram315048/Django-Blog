@@ -1,0 +1,15 @@
+{% extends 'base.htm' %}
+{% block content %}
+{% load crispy_forms_tags %}
+<div class="row">
+  {% include 'profile/sidebar.htm' %}
+  <div class="col-md-9">
+    <h2>Write New Blog</h2>
+    <form action="{% url 'profile_add_blog' %}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form | crispy }}
+      <button type="submit" class="form-submit-btn" style="width:auto; padding:.6rem 1.5rem;">Submit for Review</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

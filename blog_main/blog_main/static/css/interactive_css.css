@@ -1,0 +1,317 @@
+/* ==========================================================================
+   Django Blog — Interactive / Responsive theme
+   Warm-paper editorial palette, brass + teal accents
+   Load AFTER blog.css: <link href="{% static 'css/interactive.css' %}" rel="stylesheet">
+   ========================================================================== */
+
+:root {
+  --paper: #FBF8F3;
+  --ink: #22252B;
+  --ink-muted: #6B6F76;
+  --brass: #B8863B;
+  --brass-dark: #93692A;
+  --teal: #2C6E68;
+  --line: #E7E1D6;
+  --card-shadow: 0 2px 6px rgba(34,37,43,0.06);
+  --card-shadow-hover: 0 12px 28px rgba(34,37,43,0.14);
+  --radius: 6px;
+}
+
+/* Respect reduced-motion users */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+/* ---------- Read progress bar (signature element) ---------- */
+#read-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--brass), var(--teal));
+  z-index: 2000;
+  transition: width 80ms linear;
+}
+
+/* ---------- Header ---------- */
+.blog-header-logo {
+  color: var(--ink) !important;
+  transition: letter-spacing 200ms ease, color 200ms ease;
+}
+.blog-header-logo:hover {
+  letter-spacing: 1px;
+  color: var(--brass-dark) !important;
+}
+
+.nav-scroller a {
+  position: relative;
+  transition: color 150ms ease;
+}
+.nav-scroller a::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -2px;
+  width: 0%; height: 2px;
+  background: var(--brass);
+  transition: width 200ms ease;
+}
+.nav-scroller a:hover {
+  color: var(--brass-dark) !important;
+}
+.nav-scroller a:hover::after {
+  width: 100%;
+}
+
+/* ---------- Buttons ---------- */
+.btn-warning {
+  background: var(--brass) !important;
+  border-color: var(--brass) !important;
+  color: #fff !important;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 150ms ease;
+}
+.btn-warning:hover {
+  background: var(--brass-dark) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(184,134,59,0.35);
+}
+.btn-outline-secondary {
+  border-color: var(--line);
+  color: var(--ink);
+  transition: all 150ms ease;
+}
+.btn-outline-secondary:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+/* ---------- Cards (blog previews) ---------- */
+.card.interactive-card,
+.card.border-0 {
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  transition: transform 220ms ease, box-shadow 220ms ease;
+  background: #fff;
+}
+.card.interactive-card:hover,
+.card.border-0:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--card-shadow-hover);
+}
+.card-body h3 a, .card-body h5 a {
+  color: var(--ink);
+  transition: color 150ms ease;
+}
+.card-body h3 a:hover, .card-body h5 a:hover {
+  color: var(--brass-dark);
+}
+
+/* ---------- Jumbotron / featured hero ---------- */
+.jumbotron {
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+}
+.jumbotron::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(34,37,43,0.15) 0%, rgba(34,37,43,0.75) 100%);
+}
+.jumbotron > .col-md-8 { position: relative; z-index: 1; }
+.jumbotron h1 a, .jumbotron a {
+  transition: color 150ms ease;
+}
+.jumbotron a:hover { color: var(--brass) !important; }
+
+/* ---------- Live search dropdown ---------- */
+#live-search-results {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow-hover);
+  max-height: 340px;
+  overflow-y: auto;
+}
+#live-search-results .list-group-item {
+  border: none;
+  border-bottom: 1px solid var(--line);
+  transition: background 120ms ease;
+}
+#live-search-results .list-group-item:hover {
+  background: var(--paper);
+}
+#live-search-results .list-group-item:last-child { border-bottom: none; }
+
+/* ---------- Profile page ---------- */
+.profile-wrapper { padding: 1.5rem 0 3rem; }
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+.avatar-circle {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--brass), var(--teal));
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.75rem; font-weight: 700;
+  font-family: "Playfair Display", serif;
+  flex-shrink: 0;
+}
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+.stat-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  text-align: center;
+  display: flex; flex-direction: column; gap: .25rem;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--card-shadow-hover);
+}
+.stat-number {
+  font-family: "Playfair Display", serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--brass-dark);
+}
+.section-title {
+  font-family: "Playfair Display", serif;
+  border-bottom: 2px solid var(--line);
+  padding-bottom: .5rem;
+  margin-bottom: 1rem;
+  letter-spacing: .5px;
+}
+.comment-strip {
+  border-left: 3px solid var(--teal);
+  padding: .5rem 1rem;
+  margin-bottom: .75rem;
+  background: #fff;
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+/* ---------- Forms (crispy replacement styling) ---------- */
+.form-field-group {
+  margin-bottom: 1.1rem;
+  position: relative;
+}
+.form-field-group label {
+  display: block;
+  font-weight: 600;
+  font-size: .85rem;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: var(--ink-muted);
+  margin-bottom: .35rem;
+}
+.form-field-group input,
+.form-field-group textarea,
+.form-field-group select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: .65rem .85rem;
+  background: #fff;
+  color: var(--ink);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+  font-size: .95rem;
+}
+.form-field-group input:focus,
+.form-field-group textarea:focus,
+.form-field-group select:focus {
+  outline: none;
+  border-color: var(--brass);
+  box-shadow: 0 0 0 3px rgba(184,134,59,0.15);
+}
+.form-field-group .field-error {
+  color: #C0392B;
+  font-size: .8rem;
+  margin-top: .25rem;
+}
+.form-field-group .field-help {
+  color: var(--ink-muted);
+  font-size: .78rem;
+  margin-top: .25rem;
+}
+.password-toggle {
+  position: absolute;
+  right: .75rem;
+  top: 2.15rem;
+  cursor: pointer;
+  color: var(--ink-muted);
+  font-size: .85rem;
+  user-select: none;
+}
+.form-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 2rem;
+  box-shadow: var(--card-shadow);
+  max-width: 480px;
+  margin: 2rem auto;
+}
+.form-submit-btn {
+  width: 100%;
+  padding: .75rem;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--brass);
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: .3px;
+  cursor: pointer;
+  transition: background 150ms ease, transform 120ms ease;
+}
+.form-submit-btn:hover { background: var(--brass-dark); transform: translateY(-1px); }
+.form-submit-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+/* ---------- Like button ---------- */
+#like-btn {
+  transition: transform 150ms ease, background 150ms ease, color 150ms ease;
+}
+#like-btn.liked {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #fff;
+}
+#like-btn:active { transform: scale(0.94); }
+
+/* ---------- Sidebar (dashboard) ---------- */
+.nav-pills .nav-link {
+  border-radius: var(--radius);
+  transition: background 150ms ease, padding-left 150ms ease;
+}
+.nav-pills .nav-link:hover {
+  background: var(--line);
+  padding-left: 1.1rem;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 767px) {
+  .stat-cards { grid-template-columns: 1fr; }
+  .profile-header { flex-direction: column; text-align: center; }
+  .jumbotron h1 { font-size: 1.8rem; }
+  .form-card { margin: 1rem; padding: 1.25rem; }
+}
+
+/* Visible keyboard focus everywhere */
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 2px;
+}

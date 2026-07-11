@@ -34,17 +34,24 @@
                     <br>
                     <div class="form-group">
                         {% if user.is_authenticated %}
-                        <form action="" method="POST">
-                            {% csrf_token %}
-                            <div class="form-group">
-                                <textarea name="comment" class="form-control" placeholder="Write your comment"></textarea>
-                                <input type="submit" value="Submit" class="btn btn-primary mt-2">
-                            </div>
-
-                        </form>
-                        {% else %}
-                        <p>Please <span></span> Login to write a comment!</p>
-                        {% endif %}
+        <form action="" method="POST">
+            {% csrf_token %}
+    <div class="form-field-group">
+        <textarea name="comment" id="comment-input" maxlength="500" class="form-control" placeholder="Write your comment"></textarea>
+        <div class="field-help"><span id="char-count">0</span>/500</div>
+    </div>
+    <button type="submit" class="form-submit-btn" style="width:auto; padding:.5rem 1.5rem;">Submit</button>
+</form>
+<script>
+const commentInput = document.getElementById('comment-input');
+const charCount = document.getElementById('char-count');
+if (commentInput) {
+commentInput.addEventListener('input', () => charCount.textContent = commentInput.value.length);
+}
+</script>
+{% else %}
+<p>Please <a href="{% url 'login' %}">Login</a> to write a comment!</p>
+{% endif %}
                     </div>
 
                 </section>

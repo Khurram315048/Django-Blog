@@ -8,11 +8,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Django Blogs</title>
     <link href="https://getbootstrap.com/docs/4.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'css/interactive_css.css' %}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Playfair+Display:700,900" rel="stylesheet">
     <link href="{% static 'css/blog.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
 <body>
+  <div id="read-progress"></div>
     <div class="container">
       <header class="blog-header py-3">
         <div class="row flex-nowrap justify-content-between align-items-center">
@@ -29,12 +31,16 @@
           </div>
           <div class="col-4 d-flex justify-content-end align-items-center">
             {% if not user.is_authenticated %}
-            <a class="btn btn-sm btn-warning" href="{% url 'login' %}">Login</a> &nbsp;
-            <a class="btn btn-sm btn-outline-secondary" href="{% url 'register'  %}">Register</a>
-            {% else %}
-            <a class="btn btn-sm btn-outline-secondary" href="{% url 'dashboard'  %}">Dashboard</a>
-            <a class="btn btn-sm btn-warning" href="{% url 'logout' %}">Logout</a> &nbsp;
-            {% endif %}
+              <a class="btn btn-sm btn-warning" href="{% url 'login' %}">Login</a> &nbsp;
+              <a class="btn btn-sm btn-outline-secondary" href="{% url 'register' %}">Register</a>
+              {% else %}
+                {% if user.is_staff %}
+                <a class="btn btn-sm btn-outline-secondary" href="{% url 'dashboard' %}">Dashboard</a>
+                {% else %}
+                <a class="btn btn-sm btn-outline-secondary" href="{% url 'profile' %}">My Profile</a>
+                {% endif %}
+              <a class="btn btn-sm btn-warning" href="{% url 'logout' %}">Logout</a> &nbsp;
+              {% endif %}
           </div>
         </div>
       </header>
@@ -56,5 +62,13 @@
 <footer class="blog-footer">
   <p>Django blog built by <a href="https://python-developer-portfolio-eight.vercel.app/" target="_blank">Muhammad Khurram</a></p>
 </footer>
+<script>
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+  document.getElementById('read-progress').style.width = scrolled + '%';
+});
+</script>
 </body>
 </html>      
+

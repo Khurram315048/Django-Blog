@@ -1,0 +1,31 @@
+{% extends 'base.htm' %}
+{% block content %}
+<div class="row">
+  {% include 'profile/sidebar.htm' %}
+  <div class="col-md-9">
+    <h2>My Blogs</h2>
+    <a href="{% url 'profile_add_blog' %}" class="btn btn-dark text-light float-right mb-2">Write New Blog</a>
+    <table class="table table-hover">
+      <thead>
+        <tr><th>#</th><th>Title</th><th>Status</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+      {% for blog in my_blogs %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td><a href="{% url 'blogs' blog.slug %}">{{ blog.title }}</a></td>
+          <td>{{ blog.status }}</td>
+          <td>
+            <a href="{% url 'profile_edit_blog' blog.id %}"><i class="fa fa-edit text-success"></i></a>
+            &nbsp;
+            <a href="{% url 'profile_delete_blog' blog.id %}" onclick="return confirm('Ye blog permanently delete ho jayega. Confirm?');"><i class="fa fa-trash text-danger"></i></a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="4">No Blog yet</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'base.htm' %}
+{% block content %}
+<div class="row">
+  {% include 'profile/sidebar.htm' %}
+  <div class="col-md-9">
+    <div class="profile-header">
+      <div class="avatar-circle">{{ user.username|first|upper }}</div>
+      <div>
+        <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+        <p class="text-muted">@{{ user.username }} &middot; {{ user.email }}</p>
+      </div>
+    </div>
+    <div class="stat-cards">
+      <div class="stat-card"><span class="stat-number">{{ my_blogs_count }}</span><span>Blogs Posted</span></div>
+      <div class="stat-card"><span class="stat-number">{{ my_comments_count }}</span><span>Comments Made</span></div>
+      <div class="stat-card"><span class="stat-number">{{ total_likes_received }}</span><span>Likes Received</span></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

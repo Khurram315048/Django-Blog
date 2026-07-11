@@ -1,0 +1,33 @@
+{% extends 'base.htm' %}
+{% block content %}
+<div class="row">
+  {% include 'profile/sidebar.htm' %}
+  <div class="col-md-9">
+    <h4 class="section-title">My Comments</h4>
+    {% for c in my_comments %}
+    <div class="comment-strip">
+      <p>{{ c.comment }}</p>
+      <small class="text-muted">on <a href="{% url 'blogs' c.blog.slug %}">{{ c.blog.title }}</a> &middot; {{ c.created_at|timesince }} ago</small>
+    </div>
+    {% empty %}<p>Abhi tak koi comment nahi kiya.</p>{% endfor %}
+
+    <h4 class="section-title mt-4">Blogs I've Liked</h4>
+    <div class="row">
+    {% for like in my_likes %}
+      <div class="col-md-6">
+        <div class="card border-0 interactive-card mb-2">
+          <div class="card-body"><a href="{% url 'blogs' like.blog.slug %}">{{ like.blog.title }}</a></div>
+        </div>
+      </div>
+    {% empty %}<p>No comments yet.</p>{% endfor %}
+    </div>
+
+    <h4 class="section-title mt-4">Tags on My Blogs</h4>
+    <div>
+    {% for tag in my_blog_tags %}
+      <span class="badge bg-secondary text-light p-2 mr-1">{{ tag.tag_name }}</span>
+    {% empty %}<p>No Tags.</p>{% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

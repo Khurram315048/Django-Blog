@@ -1,13 +1,28 @@
 {% extends 'base.htm' %}
-
 {% block content %}
-
-{% load crispy_forms_tags %}
-<h3 class="text-center">Register</h3>
-<form action="{% url 'register' %}" method="POST" style="width:500px; margin:auto;">
+<div class="form-card">
+  <h3 class="text-center mb-4" style="font-family:'Playfair Display',serif;">Register</h3>
+  <form action="{% url 'register' %}" method="POST" novalidate>
     {% csrf_token %}
-    {{ form | crispy }}
-    <button type="submit" class="btn btn-warning">Submit</button>
-</form>
-
+    {% for field in form %}
+    <div class="form-field-group">
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if 'password' in field.name %}
+      <span class="password-toggle" onclick="togglePassword(this)">Show</span>
+      {% endif %}
+      {% if field.help_text %}<div class="field-help">{{ field.help_text|safe }}</div>{% endif %}
+      {% for error in field.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="form-submit-btn">Create account</button>
+  </form>
+</div>
+<script>
+function togglePassword(el) {
+  const input = el.previousElementSibling;
+  if (input.type === 'password') { input.type = 'text'; el.textContent = 'Hide'; }
+  else { input.type = 'password'; el.textContent = 'Show'; }
+}
+</script>
 {% endblock %}

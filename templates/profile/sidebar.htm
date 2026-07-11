@@ -1,0 +1,9 @@
+<div class="col-md-3">
+    <div class="nav flex-column nav-pills bg-light" aria-orientation="vertical">
+        <a href="{% url 'profile' %}" class="nav-link text-dark {% if request.path == '/profile/' %}bg-warning{% endif %}">Overview</a>
+        <a href="{% url 'profile_blogs' %}" class="nav-link text-dark {% if '/profile/blogs/' in request.path %}bg-warning{% endif %}">My Blogs</a>
+        <a href="{% url 'profile_comments' %}" class="nav-link text-dark {% if '/profile/comments/' in request.path %}bg-warning{% endif %}">Comments, Likes &amp; Tags</a>
+        <a href="{% url 'profile_settings' %}" class="nav-link text-dark {% if '/profile/settings/' in request.path %}bg-warning{% endif %}">Settings</a>
+        <a href="{% url 'logout' %}" class="nav-link text-dark">Logout</a>
+    </div>
+</div>

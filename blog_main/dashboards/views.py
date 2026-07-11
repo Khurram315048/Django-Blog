@@ -5,6 +5,14 @@ from .forms import  BlogPostForm,CategoryForm,AddUserForm,EditUserForm
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 import uuid
+from django.contrib.auth.decorators import login_required, user_passes_test
+
+
+
+
+def staff_required(view_func):
+    return user_passes_test(lambda u: u.is_staff, login_url='login')(login_required(login_url='login')(view_func))
+
 
 @login_required(login_url='login')
 def dashboard(request):

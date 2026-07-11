@@ -23,10 +23,27 @@ STATUS_CHOICES=(
     ("Published","Published")
 )        
 
+
+
+
+class Tag(models.Model):
+    tag_name = models.CharField(max_length=50, unique=True)
+    slug = models.SlugField(max_length=60, unique=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.tag_name)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.tag_name
+
+
 class Blog(models.Model):
     title=models.CharField(max_length=500)
     slug=models.SlugField(max_length=150,unique=True,blank=True)
     category=models.ForeignKey(Category,on_delete=models.CASCADE)
+    tags=models.ManyToManyField(Tag, blank=True, related_name='blogs')
     author=models.ForeignKey(User,on_delete=models.CASCADE)
     featured_image=models.ImageField(upload_to='uploads/%Y/%m/%d')
     short_description=models.TextField(max_length=500)
@@ -63,3 +80,22 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.comment
+
+
+
+
+
+
+
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='likes')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'blog'], name='unique_user_blog_like')
+        ]
+
+    def __str__(self):
+        return f"{self.user} likes {self.blog}"
