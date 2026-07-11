@@ -27,12 +27,12 @@ STATUS_CHOICES=(
 
 
 class Tag(models.Model):
-    tag_name = models.CharField(max_length=50, unique=True)
-    slug = models.SlugField(max_length=60, unique=True, blank=True)
+    tag_name=models.CharField(max_length=50,unique=True)
+    slug=models.SlugField(max_length=60,unique=True,blank=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.tag_name)
+            self.slug=slugify(self.tag_name)
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -56,13 +56,13 @@ class Blog(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            base_slug = slugify(self.title)
-            slug = base_slug
-            n = 1
+            base_slug=slugify(self.title)
+            slug=base_slug
+            n=1
             while Blog.objects.filter(slug=slug).exclude(pk=self.pk).exists():
-                slug = f"{base_slug}-{n}"
+                slug=f"{base_slug}-{n}"
                 n += 1
-            self.slug = slug
+            self.slug=slug
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -84,17 +84,15 @@ class Comment(models.Model):
 
 
 
-
-
-
 class Like(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='likes')
-    created_at = models.DateTimeField(auto_now_add=True)
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    blog=models.ForeignKey(Blog,on_delete=models.CASCADE,related_name='likes')
+    created_at=models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['user', 'blog'], name='unique_user_blog_like')
+        constraints=[
+            models.UniqueConstraint(fields=['user', 'blog'],
+                                     name='unique_user_blog_like')
         ]
 
     def __str__(self):

@@ -9,7 +9,7 @@
       <p>{{ c.comment }}</p>
       <small class="text-muted">on <a href="{% url 'blogs' c.blog.slug %}">{{ c.blog.title }}</a> &middot; {{ c.created_at|timesince }} ago</small>
     </div>
-    {% empty %}<p>Abhi tak koi comment nahi kiya.</p>{% endfor %}
+    {% empty %}<p>No comments yet.</p>{% endfor %}
 
     <h4 class="section-title mt-4">Blogs I've Liked</h4>
     <div class="row">
