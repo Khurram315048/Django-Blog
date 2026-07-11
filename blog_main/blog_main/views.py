@@ -1,3 +1,4 @@
+from django.core.checks import messages
 from django.http import HttpResponse
 from django.shortcuts import render,redirect,get_object_or_404
 from blogs.models import Category,Blog
@@ -11,7 +12,7 @@ from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 import uuid
 import logging
-from django.db.models import Count, Prefetch
+from django.core.paginator import Paginator
 
 
 
@@ -43,8 +44,11 @@ def profile(request):
 @login_required(login_url='login')
 def profile_blogs(request):
     my_blogs=Blog.objects.filter(author=request.user).order_by('-created_at')
+    paginator=Paginator(my_blogs,10)
+    page=request.GET.get('page', 1)
+    page_obj=paginator.get_page(page)
     context={
-        'my_blogs':my_blogs,
+        'page_obj':page_obj,
     }
     return render(request,'profile/blogs.htm',context)
 
@@ -56,10 +60,9 @@ def profile_add_blog(request):
         if form.is_valid():
             post=form.save(commit=False)
             post.author=request.user
-            base_slug=slugify(form.cleaned_data['title'])
-            post.slug=f"{base_slug}-{uuid.uuid4().hex[:8]}"
             post.save()
-            form.save_m2m()  
+            form.save_m2m() 
+            messages.success(request,'Blog posted successfully!') 
             return redirect('profile_blogs')
     else:
         form=UserBlogPostForm()
@@ -77,6 +80,7 @@ def profile_edit_blog(request,pk):
         form=UserBlogPostForm(request.POST,request.FILES,instance=post)
         if form.is_valid():
             form.save()
+            messages.success(request,'Blog updated successfully!')
             return redirect('profile_blogs')
     else:
         form=UserBlogPostForm(instance=post)

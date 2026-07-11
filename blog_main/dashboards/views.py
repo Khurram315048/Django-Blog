@@ -83,7 +83,7 @@ def delete_category(request,pk):
 def posts(request):
     posts=Blog.objects.all().select_related('author','category')
     paginator=Paginator(posts,10)  
-    page=request.GET.get('page',10)
+    page=request.GET.get('page',1)
     page_obj=paginator.get_page(page)
     
     context={
@@ -138,13 +138,11 @@ def edit_post(request, pk):
 
 
 
-
-
-
 @staff_required
 def delete_post(request,pk):
     post=get_object_or_404(Blog,pk=pk)
     post.delete()
+    messages.success(request,'Post deleted successfully!')
     return redirect('posts')    
 
 
@@ -171,7 +169,8 @@ def add_user(request):
             messages.success(request,'User added successfully!')
             return redirect('users')
         else:
-            print(form.errors)
+            logger=logging.getLogger(__name__)
+            logger.error(f'User form validation failed: {form.errors}')
 
     form=AddUserForm()
     context={
