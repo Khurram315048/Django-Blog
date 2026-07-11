@@ -5,3 +5,7 @@ django-crispy-forms==2.6
 pillow==12.3.0
 sqlparse==0.5.5
 tzdata==2026.2
+dj-database-url==2.3.0
+whitenoise==6.8.2
+django-cloudinary-storage==0.3.0
+cloudinary==1.41.0
