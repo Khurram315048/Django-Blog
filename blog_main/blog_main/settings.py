@@ -115,12 +115,20 @@ WSGI_APPLICATION = "blog_main.wsgi.application"
 # }
 
 
-
-DATABASES = {
-    "default": dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
-    )
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
 }
+
+# DATABASES = {
+#     "default": dj_database_url.config(
+#         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
+#     )
+# }
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
